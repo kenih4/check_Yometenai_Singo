@@ -2,6 +2,7 @@
 
 
 #	python check_Yometenai_Singo.py config_setting.xlsx config_sig.xlsx
+#	python check_Yometenai_Singo.py config_setting.xlsx config_sig_test.xlsx
 
 #	Normal
 #	/home/xfel/xfelopr/local/anaconda3/bin/python3 -OO /home/xfel/xfelopr/kenichi/gtr/gtr.py /home/xfel/xfelopr/kenichi/gtr/config_XSBT_setting_SINGLE.xlsx /home/xfel/xfelopr/kenichi/gtr/config_XSBT_sig_SINGLE.xlsx 0
@@ -39,16 +40,12 @@ plt.rcParams['font.family'] = "mikachan-PB"
 
 
 print("arg len:",len(sys.argv))
+if len(sys.argv) <= 3:
+	print("Need arg")
 print("argv:",sys.argv)
 print("arg1:" + sys.argv[1])
 conf_set = sys.argv[1]
 conf_sig = sys.argv[2]
-#if len(sys.argv) <= 3:
-#	x_position = 0
-#"else:
-#	x_position = sys.argv[3]
-
-
 
 
 
@@ -66,8 +63,7 @@ df_sig = pd.read_excel(conf_sig, sheet_name="sig")
 
 
 print("df_set.loc['interval']:	",df_set.loc['interval'])
-"""
-"""
+
 if len(sys.argv) <= 7:
 	strbegin = ""
 	strend = ""
@@ -159,6 +155,8 @@ def get_acc_sync(url):
 def get_data(url):
     t = {}
     v = {}
+    sig_name = ""
+    cnt = 0
     print(url)
     try:
         res = requests.get(url, timeout=(30.0,30.0))   
@@ -172,11 +170,12 @@ def get_data(url):
 #            print(line)
 #            m = re.search(r"(?P<sig_id>\d{1,6})", str(line))
 #           m = re.search(r"(?P<sig_id>\d{1,6})(&format=plot'>)(?P<sig_name>.+)(</a></td>)", str(line))
-            m = re.search(r"(?P<sig_id>\d{1,6})(&format=plot'>)(?P<sig_name>.+)(</a></td>)", str(line))
+            m = re.search(r"(?P<sig_id>\d{1,6})(&format=plot'>)(?P<sig_name>.+)(</a>)", str(line))
             if m:
 #                print("HIT")
 #                print(m.group('sig_id'))
-                print(m.group('sig_name'))                
+#                print(m.group('sig_name'))
+                sig_name = m.group('sig_name')
 
             m2 = re.search(r"(<td ><font color=black>)(?P<val>.+)(</font>)(\s)", str(line))
             if m2:
@@ -184,11 +183,32 @@ def get_data(url):
 #                print(m2.group('val'))
 #                print(m2.group('val').find('8.88e+32'))
                 if m2.group('val').find('8.88e+32') != -1:
-	                print("YOMETENAI")
-
+                    print("YOMETENAI")
+                    t[cnt] = sig_name
+                    cnt=cnt+1
+                if m2.group('val').find('0x7FFFFFFF') != -1:
+                    print("YOMETENAI")
+                    t[cnt] = sig_name
+                    cnt=cnt+1
+            
+            m3 = re.search(r"(<td ><font color=>)(?P<val>.+)(</font>)(\s)", str(line))
+            if m3:
+#                print("HIT2")
+#                print(m2.group('val'))
+#                print(m2.group('val').find('8.88e+32'))
+                if m3.group('val').find('8.88e+32') != -1:
+                    print("YOMETENAI")
+                    t[cnt] = sig_name
+                    cnt=cnt+1
+                if m3.group('val').find('0x7FFFFFFF') != -1:
+                    print("YOMETENAI")
+                    t[cnt] = sig_name
+                    cnt=cnt+1
+                    
+                    
 
     finally:
-	    return t,v
+        return t,v
 
 
     
@@ -255,9 +275,12 @@ xax_bar = 0.012
 tes=[]
 """
 
-for n in range(len(df_sig)):
+#for n in range(len(df_sig)):
+for n, s in enumerate(sig, 0):
 	print("~~~~~~~~~~~~~~~~~~~~~~~~label:	" + df_sig.loc[n]['label'])
-	get_data(df_sig.loc[n]['sid'])
+	s.time, s.val = get_data(df_sig.loc[n]['sid'])
+	print(s.time)
+	
 #	if  df_sig.loc[n]['ax'] == 1:
 #	    tes.append(Tesclick(ax[n]))	    
 #	    ax[n].set_position([0, (max(df_sig.loc[:]['graph'])-df_sig.loc[n]['graph'])*(1/(max(df_sig.loc[:]['graph'])+1))+xax_bar, 1, 1/(max(df_sig.loc[:]['graph'])+1)])
