@@ -53,16 +53,7 @@ df_set = pd.read_excel(conf_set, sheet_name="setting", header=None, index_col=0)
 print(df_set)
 df_sig = pd.read_excel(conf_sig, sheet_name="sig")
 #df_sig = pd.read_excel(conf_sig, sheet_name="sig", encoding='cp932')
-#df_sig = pd.read_excel(conf_sig, sheet_name="sig", encoding='shift-jis')	#DAME
-#df_sig = pd.read_excel(conf_sig, sheet_name="sig", encoding='utf-8')	#DAME
-#df_sig = pd.read_html(conf_sig, sheet_name="sig")		#DAME
-#print(df_sig)
 
-#res = subprocess.run(["amixer", "sset", "Master", "on"], stdout=subprocess.PIPE)
-#pdb.set_trace()
-
-
-print("df_set.loc['interval']:	",df_set.loc['interval'])
 
 if len(sys.argv) <= 7:
 	strbegin = ""
@@ -250,37 +241,17 @@ class SigInfo:
 sig = [SigInfo(df_sig.loc[n]['rave']) for n in range(len(df_sig))]
 
 
-
-sta = ''
-flg_fist = 0
-x_fix_flg= False
-keys = []
-
-"""
-ax = [] * len(df_sig)
-fig, (ax) = plt.subplots(nrows=len(df_sig), sharex="row", figsize=(float(x_size), float(y_size)))
-fig.patch.set_facecolor(str(df_set.loc['bcolor']).replace("1","").strip().splitlines()[0])
-fig.canvas.set_window_title(str(df_set.loc['title']).replace("1","").strip())
-
-fig.canvas.manager.window.move(int(x_position), int(y_position))
-
-
-
-for a in ax:
-	a.patch.set_facecolor('gray')
-	a.grid(axis="x", linestyle=':', color='snow')
-	a.set_position([0.0,0.0,0.0,0])
-
-xax_bar = 0.012
-tes=[]
-"""
-
-#for n in range(len(df_sig)):
 for n, s in enumerate(sig, 0):
 	print("~~~~~~~~~~~~~~~~~~~~~~~~label:	" + df_sig.loc[n]['label'])
 	s.time, s.val = get_data(df_sig.loc[n]['sid'])
+#	print(s.time)
+
+
+
+for n, s in enumerate(sig, 0):
+	print("Result~~~~~~~~~~~~~~~~~~~~~~~~label:	" + df_sig.loc[n]['label'])
 	print(s.time)
-	
+
 #	if  df_sig.loc[n]['ax'] == 1:
 #	    tes.append(Tesclick(ax[n]))	    
 #	    ax[n].set_position([0, (max(df_sig.loc[:]['graph'])-df_sig.loc[n]['graph'])*(1/(max(df_sig.loc[:]['graph'])+1))+xax_bar, 1, 1/(max(df_sig.loc[:]['graph'])+1)])
