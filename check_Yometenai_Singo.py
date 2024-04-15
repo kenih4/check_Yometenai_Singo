@@ -246,10 +246,13 @@ for n, s in enumerate(sig, 0):
 	print(df_sig.loc[n]['status'])
 	print(type(df_sig.loc[n]['status']))
 	if type(df_sig.loc[n]['status']) == float:
-		print("+++++++SKIP++++++++++++++++++++++++++++++++++++")
+		print("+++++++SKIP (nan)++++++++++++++++++++++++++++++++++++")
 		continue
 	else:
-		s.signal, s.val = get_data(df_sig.loc[n]['url'])
+		if df_sig.loc[n]['status'] == "off":
+			print("+++++++SKIP (off)++++++++++++++++++++++++++++++++++++")
+		else:
+			s.signal, s.val = get_data(df_sig.loc[n]['url'])
 #	print("[status:	" + df_sig.loc[n]['status'] +" ]")
 #	if df_sig.loc[n]['status'] != "":
 #	if math.isnan(float(df_sig.loc[n]['status'])):
@@ -258,24 +261,21 @@ for n, s in enumerate(sig, 0):
 #		s.signal, s.val = get_data(df_sig.loc[n]['url'])
 #	print(s.signal)
 
-	try:
-		print(1 / 0)
-	except:
-		print('Error')
-
-
 print("\n\n\nResult ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 for n, s in enumerate(sig, 0):
 	print("[Sub Group:	" + df_sig.loc[n]['group'] +" ]")
 	if type(df_sig.loc[n]['status']) == float:
-		print("+++++++SKIP++++++++++++++++++++++++++++++++++++")
+		print("+++++++SKIP (nan)++++++++++++++++++++++++++++++++++++")
 		continue
 #	print(s.signal)
 #	print(type(s.signal))
 #	for k in s.signal:
 #	    print(k)
-	for v in s.signal.values():
-	    print(v)     
+	if df_sig.loc[n]['status'] == "off":
+		print("+++++++SKIP (off)++++++++++++++++++++++++++++++++++++")
+	else:
+		for v in s.signal.values():
+		    print(v)     
 	#for index, item in enumerate(s.signal):
 	    #print("インデックス：" + str(index) + ", 値：" + item)
 	    #print(item)
