@@ -227,7 +227,7 @@ class SigInfo:
         self.url = ''
         self.sta = ''
         self.sto = ''
-        self.time = ''
+        self.signal = ''
         self.val = ''
         self.q = MyQ(num)
         self.rave = []
@@ -238,19 +238,47 @@ class SigInfo:
         self.sigma = 0
         self.flg_sound = 20
         
-sig = [SigInfo(df_sig.loc[n]['rave']) for n in range(len(df_sig))]
+sig = [SigInfo(df_sig.loc[n]['group']) for n in range(len(df_sig))]
 
 
 for n, s in enumerate(sig, 0):
-	print("~~~~~~~~~~~~~~~~~~~~~~~~label:	" + df_sig.loc[n]['label'])
-	s.time, s.val = get_data(df_sig.loc[n]['sid'])
-#	print(s.time)
+	print("[Sub Group:	" + df_sig.loc[n]['group'] +" ]")
+	print(df_sig.loc[n]['status'])
+	print(type(df_sig.loc[n]['status']))
+	if type(df_sig.loc[n]['status']) == float:
+		print("+++++++SKIP++++++++++++++++++++++++++++++++++++")
+		continue
+	else:
+		s.signal, s.val = get_data(df_sig.loc[n]['url'])
+#	print("[status:	" + df_sig.loc[n]['status'] +" ]")
+#	if df_sig.loc[n]['status'] != "":
+#	if math.isnan(float(df_sig.loc[n]['status'])):
+#		print("+++++++SKIP++++++++++++++++++++++++++++++++++++")
+#	else:
+#		s.signal, s.val = get_data(df_sig.loc[n]['url'])
+#	print(s.signal)
+
+	try:
+		print(1 / 0)
+	except:
+		print('Error')
 
 
-
+print("\n\n\nResult ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 for n, s in enumerate(sig, 0):
-	print("Result~~~~~~~~~~~~~~~~~~~~~~~~label:	" + df_sig.loc[n]['label'])
-	print(s.time)
+	print("[Sub Group:	" + df_sig.loc[n]['group'] +" ]")
+	if type(df_sig.loc[n]['status']) == float:
+		print("+++++++SKIP++++++++++++++++++++++++++++++++++++")
+		continue
+#	print(s.signal)
+#	print(type(s.signal))
+#	for k in s.signal:
+#	    print(k)
+	for v in s.signal.values():
+	    print(v)     
+	#for index, item in enumerate(s.signal):
+	    #print("インデックス：" + str(index) + ", 値：" + item)
+	    #print(item)
 
 #	if  df_sig.loc[n]['ax'] == 1:
 #	    tes.append(Tesclick(ax[n]))	    
@@ -330,17 +358,17 @@ def _redraw(_):
 		if len(keys) != len(s.rave):
 			print(str(df_sig.loc[n]['sname']) +	"	Not match dimension	keys:" + str(len(keys))	+ "		s.rave" + str(len(s.rave)))
 			return
-int( pd.pivot_table(df, index=[df_sig.loc[0]['label']], columns=[df_sig.loc[1]['label']] ) )
+int( pd.pivot_table(df, index=[df_sig.loc[0]['group']], columns=[df_sig.loc[1]['group']] ) )
 	
 #	print(keys)
 
 	print('<<< redraw >>>	' + str(x_min) + '	- 	' + str(x_max))	
-#	print(sig[0].time)
+#	print(sig[0].signal)
 	for n, s in enumerate(sig, 0):
 #		print(n)
 #		print(keys)
 #		print(s.url)
-#		print(s.time)
+#		print(s.signal)
 #		print(s.rave)
 #		print(s.rave_sigma)
 #		print(s.mu)
@@ -365,11 +393,11 @@ int( pd.pivot_table(df, index=[df_sig.loc[0]['label']], columns=[df_sig.loc[1]['
 	
 		if int(df_sig.loc[n]['calc-sigma'])==0:
 			if int(df_sig.loc[n]['rave'])==1:
-				ax[n].plot(keys, s.rave, linestyle="solid", marker=str(df_sig.loc[n]['marker']).replace("1","").strip().splitlines()[0], markersize=df_sig.loc[n]['linewidth'], color=df_sig.loc[n]['color'], label=df_sig.loc[n]['label'], clip_on=False)
+				ax[n].plot(keys, s.rave, linestyle="solid", marker=str(df_sig.loc[n]['marker']).replace("1","").strip().splitlines()[0], markersize=df_sig.loc[n]['linewidth'], color=df_sig.loc[n]['color'], group=df_sig.loc[n]['group'], clip_on=False)
 			else:
-				ax[n].plot(keys, s.rave, linestyle="solid", linewidth=df_sig.loc[n]['linewidth'], color=df_sig.loc[n]['color'], label=df_sig.loc[n]['label'], clip_on=False)
+				ax[n].plot(keys, s.rave, linestyle="solid", linewidth=df_sig.loc[n]['linewidth'], color=df_sig.loc[n]['color'], group=df_sig.loc[n]['group'], clip_on=False)
 		else:
-			ax[n].errorbar(keys, s.rave, yerr = s.rave_sigma, elinewidth=0.001, capsize=1, capthick=0.3, alpha=0.5, marker=str(df_sig.loc[n]['marker']).replace("1","").strip().splitlines()[0], markersize=df_sig.loc[n]['linewidth'], linestyle="solid", color=df_sig.loc[n]['color'], label=df_sig.loc[n]['label'])
+			ax[n].errorbar(keys, s.rave, yerr = s.rave_sigma, elinewidth=0.001, capsize=1, capthick=0.3, alpha=0.5, marker=str(df_sig.loc[n]['marker']).replace("1","").strip().splitlines()[0], markersize=df_sig.loc[n]['linewidth'], linestyle="solid", color=df_sig.loc[n]['color'], group=df_sig.loc[n]['group'])
 
 #		ax[n].set_xlim([x_min, x_max + (x_max -x_min)/12])
 
@@ -383,7 +411,7 @@ int( pd.pivot_table(df, index=[df_sig.loc[0]['label']], columns=[df_sig.loc[1]['
 #			ax[n].xaxis.set_major_formatter(DateFormatter('%d %H:%M'))
 			ax[n].xaxis.set_major_formatter(DateFormatter('%-m/%-d(%-H:%-M)'))
 #			ax[n].xaxis.set_major_formatter(DateFormatter('%H:%M:%S'))
-			ax[n].tick_params(axis='x', labelsize=14)
+			ax[n].tick_params(axis='x', groupsize=14)
 
 #	keys.clear()
 	flg_fist = 1
@@ -403,7 +431,7 @@ def _redraw2(_):
 		
 	for n, s in enumerate(sig, 0):
 		if s.mu!=0:
-			sx[n].hist(sig[n].rave, bins=20, alpha=0.65, label="Haiki", color="red", stacked=False)
+			sx[n].hist(sig[n].rave, bins=20, alpha=0.65, group="Haiki", color="red", stacked=False)
 
 
 
