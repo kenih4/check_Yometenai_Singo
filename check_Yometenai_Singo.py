@@ -3,6 +3,8 @@
 
 #	python check_Yometenai_Singo.py config_setting.xlsx config_sig.xlsx
 #	python check_Yometenai_Singo.py config_setting.xlsx config_sig_test.xlsx
+#	python check_Yometenai_Singo.py config_setting.xlsx config_sig_tmg.xlsx
+#	python check_Yometenai_Singo.py config_setting.xlsx config_sig_rf.xlsx
 
 #	Normal
 #	/home/xfel/xfelopr/local/anaconda3/bin/python3 -OO /home/xfel/xfelopr/kenichi/gtr/gtr.py /home/xfel/xfelopr/kenichi/gtr/config_XSBT_setting_SINGLE.xlsx /home/xfel/xfelopr/kenichi/gtr/config_XSBT_sig_SINGLE.xlsx 0
@@ -244,7 +246,7 @@ sig = [SigInfo(df_sig.loc[n]['group']) for n in range(len(df_sig))]
 for n, s in enumerate(sig, 0):
 	print("[Sub Group:	" + df_sig.loc[n]['group'] +" ]")
 	print(df_sig.loc[n]['status'])
-	print(type(df_sig.loc[n]['status']))
+#	print(type(df_sig.loc[n]['status']))
 	if type(df_sig.loc[n]['status']) == float:
 		print("+++++++SKIP (nan)++++++++++++++++++++++++++++++++++++")
 		continue
